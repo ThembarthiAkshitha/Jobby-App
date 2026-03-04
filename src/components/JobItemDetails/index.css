@@ -1,0 +1,135 @@
+.job-details-main-bg-container {
+  display: flex;
+  flex-direction: column;
+}
+.job-details-card-bg-container {
+  background-color: #000000;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.job-item-main-bg-container {
+  width: 100%;
+  background-color: #202020;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 10px;
+  color: #ffffff;
+  margin: 10px;
+}
+.company-logo-and-position-name-container {
+  display: flex;
+  align-items: center;
+}
+.company-logo-image {
+  height: 50px;
+  width: 100px;
+  margin-right: 10px;
+}
+.role-rating-container {
+  display: flex;
+  flex-direction: column;
+}
+.star-color {
+  color: #fbbf24;
+}
+.location-employement-package-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.location-employement-container {
+  display: flex;
+  width: 30%;
+  justify-content: space-between;
+  align-items: center;
+}
+.icon-image {
+  height: 15px;
+  width: 15px;
+  margin-right: 5px;
+}
+.description-container {
+  display: flex;
+  flex-direction: column;
+}
+.job-item-heading {
+  font-size: 15px;
+}
+.heading-visit-site-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.skill-image {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
+.skills-container {
+  display: flex;
+  flex-direction: column;
+}
+.skill-item-container {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  width: 25%;
+}
+.skills-whole-items-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding-left: 0px;
+  margin-left: 0px;
+}
+.life-at-company-container {
+  display: felx;
+  flex-direction: column;
+}
+.description-image-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+.life-at-image {
+  width: 300px;
+  height: 200px;
+  border-radius: 10px;
+}
+.similar-jobs-container {
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+.similar-cards-unordered-list {
+  list-style-type: none;
+  padding-left: 0px;
+  margin-left: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+.similar-job-item-main-bg-container {
+  width: 30%;
+  background-color: #202020;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 10px;
+  color: #ffffff;
+  margin: 5px;
+}
+.similar-job-location-employement-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
