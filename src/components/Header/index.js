@@ -13,11 +13,13 @@ const Header = props => {
     <div className="header-main-bg-container">
       <ul className="unordered-list">
         <Link to="/" className="link-style">
-          <img
-            src="https://assets.ccbp.in/frontend/react-js/logo-img.png"
-            alt="website logo"
-            className="website-image"
-          />
+          <li>
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/logo-img.png"
+              alt="website logo"
+              className="website-image"
+            />
+          </li>
         </Link>
         <Link to="/" className="link-style">
           <li>Home</li>
@@ -26,7 +28,7 @@ const Header = props => {
           <li>Jobs</li>
         </Link>
       </ul>
-      <button className="log-out-btn" onClick={onLogoutClick}>
+      <button className="log-out-btn" onClick={onLogoutClick} type="button">
         Logout
       </button>
     </div>

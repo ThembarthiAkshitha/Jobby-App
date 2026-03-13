@@ -18,12 +18,18 @@ const SkillItem = props => {
   )
 }
 
+const apiStatusConstants = {
+  inProgress: 'IN_PROGRESS',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+}
+
 const SimilarJobCard = props => {
   const {details} = props
   const {
     companyLogoUrl,
     employmentType,
-    id,
+    // id,
     jobDescription,
     location,
     rating,
@@ -34,7 +40,7 @@ const SimilarJobCard = props => {
       <div className="company-logo-and-position-name-container">
         <img
           src={companyLogoUrl}
-          alt="job company logo"
+          alt="similar job company logo"
           className="company-logo-image"
         />
         <div className="role-rating-container">
@@ -63,7 +69,7 @@ const SimilarJobCard = props => {
 
 class JobItemDetails extends Component {
   state = {
-    isLoading: true,
+    apiStatus: apiStatusConstants.inProgress,
     jobDetails: {},
     similarJobs: [],
   }
@@ -76,9 +82,15 @@ class JobItemDetails extends Component {
     console.log(updatedDetails)
     const {jobDetails, similarJobs} = updatedDetails
     this.setState({
-      isLoading: false,
+      apiStatus: apiStatusConstants.success,
       jobDetails,
       similarJobs,
+    })
+  }
+
+  onFailure = () => {
+    this.setState({
+      apiStatus: apiStatusConstants.failure,
     })
   }
 
@@ -129,12 +141,36 @@ class JobItemDetails extends Component {
         })),
       }
       this.onSuccess(updatedDetails)
+    } else {
+      this.onFailure()
     }
   }
 
   renderLoading = () => (
     <div className="loader-container" data-testid="loader">
       <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+    </div>
+  )
+
+  // onRetry = () => {
+  //   this.getJobItemDetails()
+  // }
+
+  renderJobDetailsFailure = () => (
+    <div className="jobs-failed-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+        alt="failure view"
+      />
+      <h1>Oops! Something Went Wrong</h1>
+      <p>We cannot seem to find the page you are looking for</p>
+      <button
+        className="retry-btn"
+        onClick={this.getJobItemDetails}
+        type="button"
+      >
+        Retry
+      </button>
     </div>
   )
 
@@ -145,7 +181,7 @@ class JobItemDetails extends Component {
       companyWebsiteUrl,
       employmentType,
       title,
-      id,
+      // id,
       jobDescription,
       location,
       rating,
@@ -226,8 +262,17 @@ class JobItemDetails extends Component {
   }
 
   render() {
-    const {isLoading} = this.state
-    return <div>{isLoading ? this.renderLoading() : this.renderDetails()}</div>
+    const {apiStatus} = this.state
+    switch (apiStatus) {
+      case apiStatusConstants.inProgress:
+        return this.renderLoading()
+      case apiStatusConstants.success:
+        return this.renderDetails()
+      case apiStatusConstants.failure:
+        return this.renderJobDetailsFailure()
+      default:
+        return null
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 .job-item-main-bg-container {
-  width: 100%;
+  width: 95%;
   background-color: #202020;
   display: flex;
   flex-direction: column;
@@ -48,6 +48,6 @@
 .job-item-heading {
   font-size: 15px;
 }
-.link-style{
+.link-style {
   text-decoration: none;
 }

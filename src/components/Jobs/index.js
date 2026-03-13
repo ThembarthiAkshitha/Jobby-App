@@ -5,6 +5,7 @@ import {BsSearch} from 'react-icons/bs'
 import Header from '../Header'
 import './index.css'
 import JobItem from '../JobItem'
+import Sidebar from '../Sidebar'
 
 const apiStatusConstants = {
   inProgress: 'IN_PROGRESS',
@@ -12,89 +13,16 @@ const apiStatusConstants = {
   failure: 'FAILURE',
 }
 
-const employmentTypesList = [
-  {
-    label: 'Full Time',
-    employmentTypeId: 'FULLTIME',
-  },
-  {
-    label: 'Part Time',
-    employmentTypeId: 'PARTTIME',
-  },
-  {
-    label: 'Freelance',
-    employmentTypeId: 'FREELANCE',
-  },
-  {
-    label: 'Internship',
-    employmentTypeId: 'INTERNSHIP',
-  },
-]
-
-const salaryRangesList = [
-  {
-    salaryRangeId: '1000000',
-    label: '10 LPA and above',
-  },
-  {
-    salaryRangeId: '2000000',
-    label: '20 LPA and above',
-  },
-  {
-    salaryRangeId: '3000000',
-    label: '30 LPA and above',
-  },
-  {
-    salaryRangeId: '4000000',
-    label: '40 LPA and above',
-  },
-]
-
-const EmploymentTypesListItem = props => {
-  const {details, onEmploymentTypeChange} = props
-  const {employmentTypeId, label} = details
-  return (
-    <li>
-      <input
-        type="checkbox"
-        id={employmentTypeId}
-        onChange={onEmploymentTypeChange}
-        value={employmentTypeId}
-      />
-      <label htmlFor={employmentTypeId}>{label}</label>
-    </li>
-  )
-}
-const SalaryTypesListItem = props => {
-  const {details, onSalaryChange} = props
-  const {salaryRangeId, label} = details
-  const onSalary = event => {
-    onSalaryChange(event.target.value)
-  }
-  return (
-    <li>
-      <input
-        type="radio"
-        id={salaryRangeId}
-        name="salary"
-        onChange={onSalary}
-        value={salaryRangeId}
-      />
-      <label htmlFor={salaryRangeId}>{label}</label>
-    </li>
-  )
-}
-
 class Jobs extends Component {
   state = {
     apiStatus: apiStatusConstants.inProgress,
-    profileDetails: {},
     jobsDetails: [],
     searchInput: '',
-    allJobs: [],
+    // allJobs: [],
     search: '',
     minimumPackage: 0,
     employmentTypes: [],
+    locationTypes: [],
   }
 
   componentDidMount() {
@@ -127,6 +55,26 @@ class Jobs extends Component {
     )
   }
 
+  onLocationChange = event => {
+    const {locationTypes} = this.state
+    const {value, checked} = event.target
+
+    let updatedLocationTypes
+
+    if (checked) {
+      updatedLocationTypes = [...locationTypes, value]
+    } else {
+      updatedLocationTypes = locationTypes.filter(each => each !== value)
+    }
+    this.setState(
+      {
+        locationTypes: updatedLocationTypes,
+        apiStatus: apiStatusConstants.inProgress,
+      },
+      this.getProfileDetails,
+    )
+  }
+
   onSalaryChange = value => {
     this.setState(
       {
@@ -148,12 +96,18 @@ class Jobs extends Component {
     )
   }
 
-  onSuccess = async (profileDetails, updatedJobDetails) => {
+  onSuccess = updatedJobDetails => {
+    const {locationTypes} = this.state
+    let filteredList = updatedJobDetails
+    if (locationTypes.length > 0) {
+      filteredList = updatedJobDetails.filter(job =>
+        locationTypes.includes(job.location.toUpperCase()),
+      )
+    }
     this.setState({
       apiStatus: apiStatusConstants.success,
-      profileDetails,
-      jobsDetails: updatedJobDetails,
-      allJobs: updatedJobDetails,
+      jobsDetails: filteredList,
+      // allJobs: updatedJobDetails,
     })
   }
 
@@ -165,26 +119,18 @@ class Jobs extends Component {
 
   getProfileDetails = async () => {
     const jwtToken = Cookies.get('jwt_token')
-    const {search, minimumPackage, employmentTypes} = this.state
+    const {search = '', minimumPackage = '', employmentTypes = ''} = this.state
     const employmentType = employmentTypes.join(',')
-    const profileApiUrl = 'https://apis.ccbp.in/profile'
-    const jobsApiUrl = `https://apis.ccbp.in/jobs?search=${search}&minimum_package=${minimumPackage}&employment_type=${employmentType}`
+    const jobsApiUrl = `https://apis.ccbp.in/jobs?search=${search}&minimum_package=${minimumPackage}&employment_type=${employmentType}&`
     const options = {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
     }
-    const response = await fetch(profileApiUrl, options)
     const response1 = await fetch(jobsApiUrl, options)
-    const data1 = await response1.json()
-    if (response.ok && response1.ok) {
-      const data = await response.json()
-      const updatedData = {
-        name: data.profile_details.name,
-        profileImageUrl: data.profile_details.profile_image_url,
-        shortBio: data.profile_details.short_bio,
-      }
+    if (response1.ok) {
+      const data1 = await response1.json()
       const updatedJobDetails = data1.jobs.map(each => ({
         companyLogoUrl: each.company_logo_url,
         employmentType: each.employment_type,
@@ -196,23 +142,10 @@ class Jobs extends Component {
         title: each.title,
       }))
       console.log(`job details: `, updatedJobDetails)
-      console.log('user profile:', updatedData)
-      this.onSuccess(updatedData, updatedJobDetails)
+      this.onSuccess(updatedJobDetails)
     } else {
       this.onFailure()
     }
-  }
-
-  renderSuccessProfile = () => {
-    const {profileDetails} = this.state
-    const {name, shortBio, profileImageUrl} = profileDetails
-    return (
-      <div className="profile-container">
-        <img src={profileImageUrl} className="profile-image" alt="profile" />
-        <h1 className="profile-name-heading">{name}</h1>
-        <p className="bio-description">{shortBio}</p>
-      </div>
-    )
   }
 
   renderLoading = () => (
@@ -235,11 +168,11 @@ class Jobs extends Component {
   renderJobs = () => {
     const {jobsDetails} = this.state
     return (
-      <>
+      <ul className="unorderd-list-container">
         {jobsDetails.map(each => (
           <JobItem details={each} key={each.id} />
         ))}
-      </>
+      </ul>
     )
   }
 
@@ -249,12 +182,6 @@ class Jobs extends Component {
     return <>{length === 0 ? this.renderNoJobs() : this.renderJobs()}</>
   }
 
-  renderProfileFailure = () => (
-    <div className="render-failure-container">
-      <button className="retry-btn">Retry</button>
-    </div>
-  )
-
   renderJobsFailure = () => (
     <div className="jobs-failed-container">
       <img
@@ -263,7 +190,13 @@ class Jobs extends Component {
       />
       <h1>Oops! Something Went Wrong</h1>
       <p>We cannot seem to find the page you are looking for</p>
-      <button className="retry-btn">Retry</button>
+      <button
+        className="retry-btn"
+        onClick={this.getProfileDetails}
+        type="button"
+      >
+        Retry
+      </button>
     </div>
   )
 
@@ -273,42 +206,11 @@ class Jobs extends Component {
       <div className="jobs-main-bg-container">
         <Header />
         <div className="jobs-bottom-container">
-          <div className="first-container">
-            <div>
-              {apiStatus === apiStatusConstants.success &&
-                this.renderSuccessProfile()}
-              {apiStatus === apiStatusConstants.inProgress &&
-                this.renderLoading()}
-              {apiStatus === apiStatusConstants.failure &&
-                this.renderProfileFailure()}
-            </div>
-            <hr />
-            <div className="unordered-list-container">
-              <h1>Types of Employment</h1>
-              <ul className="unorderd-list">
-                {employmentTypesList.map(each => (
-                  <EmploymentTypesListItem
-                    details={each}
-                    key={each.employmentTypeId}
-                    onEmploymentTypeChange={this.onEmploymentTypeChange}
-                  />
-                ))}
-              </ul>
-            </div>
-            <hr />
-            <div className="unordered-list-container">
-              <h1>Salary Range</h1>
-              <ul className="unorderd-list">
-                {salaryRangesList.map(each => (
-                  <SalaryTypesListItem
-                    details={each}
-                    key={each.salaryRangeId}
-                    onSalaryChange={this.onSalaryChange}
-                  />
-                ))}
-              </ul>
-            </div>
-          </div>
+          <Sidebar
+            onEmploymentTypeChange={this.onEmploymentTypeChange}
+            onSalaryChange={this.onSalaryChange}
+            onLocationChange={this.onLocationChange}
+          />
           <div className="second-container">
             <div className="search-input-icon-container">
               <input
@@ -326,14 +228,14 @@ class Jobs extends Component {
                 <BsSearch className="search-icon" />
               </button>
             </div>
-            <ul>
+            <div className="job-items-container">
               {apiStatus === apiStatusConstants.inProgress &&
                 this.renderLoading()}
               {apiStatus === apiStatusConstants.success &&
                 this.renderSuccessJobs()}
               {apiStatus === apiStatusConstants.failure &&
                 this.renderJobsFailure()}
-            </ul>
+            </div>
           </div>
         </div>
       </div>

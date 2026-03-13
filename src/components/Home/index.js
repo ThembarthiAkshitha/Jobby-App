@@ -12,7 +12,9 @@ const Home = () => (
         reviews. Find the job that fits your abilities and potential.
       </p>
       <Link to="/jobs" className="link-style">
-        <button className="find-jobs-btn">Find Jobs</button>
+        <button className="find-jobs-btn" type="button">
+          Find Jobs
+        </button>
       </Link>
     </div>
   </div>
