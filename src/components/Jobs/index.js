@@ -148,12 +148,14 @@ class Jobs extends Component {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   renderLoading = () => (
     <div className="loader-container" data-testid="loader">
       <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
     </div>
   )
 
+  // eslint-disable-next-line class-methods-use-this
   renderNoJobs = () => (
     <div className="no-jobs-failed-container">
       <img

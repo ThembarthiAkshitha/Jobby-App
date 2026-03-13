@@ -190,6 +190,7 @@ class Sidebar extends Component {
     </div>
   )
 
+  // eslint-disable-next-line class-methods-use-this
   renderLoading = () => (
     <div className="loader-container" data-testid="loader">
       <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
